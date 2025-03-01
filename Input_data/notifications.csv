@@ -1,12 +1,14 @@
 notification_id,user_id,message,notification_date
-1,1,"Your booking at Grand Plaza is confirmed",2025-03-01 12:05:00
-2,2,"Hotel details updated for Sunrise Inn",2025-03-01 12:10:00
-3,3,"Your booking has been updated",2025-03-02 09:15:00
-4,4,"Reminder: Check-in tomorrow",2025-03-02 10:20:00
-5,5,"New discount available for your next stay",2025-03-03 11:05:00
-6,6,"Your payment is pending",2025-03-03 12:30:00
-7,7,"Review your recent stay",2025-03-04 08:45:00
-8,8,"Your hotel listing has new inquiries",2025-03-04 09:50:00
-9,9,"Booking cancellation confirmed",2025-03-05 14:30:00
-10,10,"Welcome to our booking platform!",2025-03-05 15:20:00
+1,1,"Bookings are open now—reserve your stay today!",2025-03-01 12:05:00
+2,2,"New discounts available on your next booking.",2025-03-01 12:10:00
+3,3,"Enjoy exclusive deals—book your room now!",2025-03-02 09:15:00
+4,4,"Hurry! Special rates available for a limited time.",2025-03-02 10:20:00
+5,5,"Reserve your room and save with our latest offers.",2025-03-03 11:05:00
+6,6,"Secure your reservation; bookings are officially open!",2025-03-03 12:30:00
+7,7,"Check out our new offers and discount promotions.",2025-03-04 08:45:00
+8,8,"Experience luxury at affordable prices—book today!",2025-03-04 09:50:00
+9,9,"Limited time discount on premium rooms—act fast!",2025-03-05 14:30:00
+10,10,"Don't miss out—special booking rates available now.",2025-03-05 15:20:00
+11,1,"Exclusive offer: Book now and enjoy extra perks.",2025-04-01 12:05:00
+12,2,"Discover new deals: Discounts available on selected hotels.",2025-04-01 12:10:00
 
