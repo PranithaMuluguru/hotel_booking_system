@@ -1,0 +1,12 @@
+discount_id,Promo_code,discount_amount,valid_from,valid_until,description,booking_id
+1,DISCOUNT10,10.00,2025-04-01,2025-04-30,"Spring discount",1
+2,SUMMER15,15.00,2025-06-01,2025-06-30,"Summer special",2
+3,WINTER20,20.00,2025-12-01,2025-12-31,"Winter sale",3
+4,FLASH5,5.00,2025-03-15,2025-03-20,"Flash deal",4
+5,NEWYEAR25,25.00,2026-01-01,2026-01-31,"New Year offer",5
+6,VIP30,30.00,2025-05-01,2025-05-31,"VIP discount",6
+7,EARLYBIRD10,10.00,2025-07-01,2025-07-15,"Early bird offer",7
+8,LASTMIN20,20.00,2025-08-01,2025-08-10,"Last minute deal",8
+9,EXCLUSIVE15,15.00,2025-09-01,2025-09-30,"Exclusive offer",9
+10,SEASONAL5,5.00,2025-10-01,2025-10-31,"Seasonal discount",10
+

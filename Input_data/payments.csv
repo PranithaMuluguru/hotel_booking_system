@@ -1,0 +1,12 @@
+payment_id,payment_date,amount,payment_method,transaction_id,status,booking_id,guest_id
+1,2025-03-01,600.00,Credit Card,TXN001,confirmed,1,1
+2,2025-03-01,340.00,Debit Card,TXN002,confirmed,2,2
+3,2025-03-02,700.00,PayPal,TXN003,pending,3,3
+4,2025-03-02,450.00,Credit Card,TXN004,confirmed,4,4
+5,2025-03-03,800.00,Debit Card,TXN005,confirmed,5,5
+6,2025-03-03,380.00,PayPal,TXN006,pending,6,6
+7,2025-03-04,500.00,Credit Card,TXN007,confirmed,7,7
+8,2025-03-04,750.00,Debit Card,TXN008,confirmed,8,1
+9,2025-03-05,900.00,Credit Card,TXN009,pending,9,3
+10,2025-03-05,950.00,PayPal,TXN010,confirmed,10,5
+
