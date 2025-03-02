@@ -9,4 +9,3 @@ user_id,user_name,password_hashed,first_name,last_name,address,phone_number,age,
 8,user8,$2y$10$hash008,Olivia,Jones,"505 Elm St, Suburbia","888-999-0000",33,user8@example.com,2025-03-01 08:35:00,host
 9,user9,$2y$10$hash009,Noah,Davis,"606 Walnut Ave, Oldtown","999-000-1111",22,user9@example.com,2025-03-01 08:40:00,guest
 10,user10,$2y$10$hash010,Ava,Martin,"707 Chestnut Rd, Riverside","000-111-2222",31,user10@example.com,2025-03-01 08:45:00,guest
-
