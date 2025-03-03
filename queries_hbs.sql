@@ -1,5 +1,5 @@
 -- Users table stores details of all users, including guests and hosts
-
+DROP TABLE users CASCADE;
 CREATE TABLE users(
 	user_id SERIAL PRIMARY KEY NOT NULL,
 	user_name VARCHAR(255) UNIQUE NOT NULL,
@@ -15,6 +15,25 @@ CREATE TABLE users(
 );
 
 SELECT * FROM users;
+-- Enable pgcrypto extension (only required once)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Insert user data with hashed passwords
+INSERT INTO users (user_id, user_name, password_hashed, first_name, last_name, address, phone_number, age, email, created_at, Role)
+VALUES 
+(1, 'user1', crypt('password1', gen_salt('bf')), 'John', 'Doe', '123 Main St, Cityville', '111-222-3333', 28, 'user1@example.com', '2025-03-01 08:00:00', 'guest'),
+(2, 'user2', crypt('password2', gen_salt('bf')), 'Alice', 'Smith', '456 Oak Ave, Townsville', '222-333-4444', 32, 'user2@example.com', '2025-03-01 08:05:00', 'host'),
+(3, 'user3', crypt('password3', gen_salt('bf')), 'Mike', 'Brown', '789 Pine Rd, Villageton', '333-444-5555', 45, 'user3@example.com', '2025-03-01 08:10:00', 'guest'),
+(4, 'user4', crypt('password4', gen_salt('bf')), 'Sarah', 'Lee', '101 Maple Blvd, Hamlet', '444-555-6666', 27, 'user4@example.com', '2025-03-01 08:15:00', 'host'),
+(5, 'user5', crypt('password5', gen_salt('bf')), 'David', 'Wilson', '202 Birch St, Metro City', '555-666-7777', 36, 'user5@example.com', '2025-03-01 08:20:00', 'guest'),
+(6, 'user6', crypt('password6', gen_salt('bf')), 'Emma', 'Johnson', '303 Cedar Dr, Uptown', '666-777-8888', 29, 'user6@example.com', '2025-03-01 08:25:00', 'guest'),
+(7, 'user7', crypt('password7', gen_salt('bf')), 'Liam', 'Williams', '404 Spruce Ln, Downtown', '777-888-9999', 40, 'user7@example.com', '2025-03-01 08:30:00', 'guest'),
+(8, 'user8', crypt('password8', gen_salt('bf')), 'Olivia', 'Jones', '505 Elm St, Suburbia', '888-999-0000', 33, 'user8@example.com', '2025-03-01 08:35:00', 'host'),
+(9, 'user9', crypt('password9', gen_salt('bf')), 'Noah', 'Davis', '606 Walnut Ave, Oldtown', '999-000-1111', 22, 'user9@example.com', '2025-03-01 08:40:00', 'guest'),
+(10, 'user10', crypt('password10', gen_salt('bf')), 'Ava', 'Martin', '707 Chestnut Rd, Riverside', '000-111-2222', 31, 'user10@example.com', '2025-03-01 08:45:00', 'guest');
+
+
+
 -- Guests table stores users who book hotels
 
 CREATE TABLE guest(
@@ -24,6 +43,12 @@ CREATE TABLE guest(
 SELECT * FROM guest;
 
 
+
+
+
+
+
+
 -- Hosts table stores users who list hotels
 
 CREATE TABLE host(
@@ -31,6 +56,12 @@ CREATE TABLE host(
 	user_id INTEGER NOT NULL  REFERENCES users(user_id) ON DELETE CASCADE
 );
 SELECT * FROM host;
+
+
+
+
+
+
 
 
 -- Hotels table stores details of hotels listed by hosts
@@ -80,6 +111,15 @@ CREATE TABLE Amenities(
 
 SELECT * FROM amenities;
 
+
+
+
+
+
+
+
+
+
 -- Room_amenity table links rooms with available amenities
 
 CREATE TABLE room_amenity(
@@ -89,6 +129,12 @@ CREATE TABLE room_amenity(
 );
 
 SELECT * FROM room_amenity;
+
+
+
+
+
+
 
 CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'cancelled');
 
@@ -105,8 +151,38 @@ CREATE TABLE bookings(
 	hotel_id INTEGER REFERENCES hotel(hotel_id),
 	guest_id INTEGER REFERENCES guest(guest_id) ON DELETE CASCADE
 );
+--- constraint to check in date is less than out date.
+ALTER TABLE bookings
+ADD CONSTRAINT check_dates 
+CHECK (check_out_date >= check_in_date);
 
 SELECT * FROM bookings;
+
+
+
+
+
+
+----to ensure a person can book multiple rooms this table is created
+CREATE TABLE booking_rooms (
+    booking_id INTEGER REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    room_id INTEGER REFERENCES Rooms(room_id) ON DELETE CASCADE,
+    PRIMARY KEY (booking_id, room_id)
+);
+
+INSERT INTO booking_rooms (booking_id, room_id) VALUES
+(1, 1), -- Booking 101 includes Room 201
+(2, 2), -- Booking 101 includes Room 202 (same hotel)
+(3, 4), -- Booking 102 includes Room 203
+(4, 5), -- Booking 103 includes Room 201 (another booking for same room)
+(5, 7); -- Booking 103 includes Room 202
+
+SELECT * FROM booking_rooms;
+
+
+
+
+
 
 
 
@@ -142,6 +218,10 @@ CREATE TABLE Review(
 
 SELECT * FROM review;
 
+
+
+
+
 -- Cancellation table stores booking cancellation details
 
 CREATE TABLE Cancellation(
@@ -153,6 +233,15 @@ CREATE TABLE Cancellation(
 );
 
 SELECT * FROM cancellation;
+
+
+
+
+
+
+
+
+
 
 -- Discounts table stores discount details and promo codes
 
@@ -168,6 +257,10 @@ CREATE TABLE Discounts(
 SELECT * FROM discounts;
 
 
+
+
+
+
 -- Notifications table stores messages sent to users
 
 CREATE TABLE notifications (
@@ -179,6 +272,12 @@ CREATE TABLE notifications (
 SELECT * FROM notifications;
 
 
+
+
+
+
+
+
 -- Hotel images table stores URLs of images for each hotel
 
 CREATE TABLE hotel_images (
@@ -187,6 +286,12 @@ CREATE TABLE hotel_images (
     image_url TEXT NOT NULL
 );
 SELECT * FROM hotel_images;
+
+
+
+
+
+
 
 
 -- Login attempts table tracks login activity of users
@@ -200,19 +305,13 @@ CREATE TABLE Login_Attempts (
 
 SELECT * FROM login_attempts;
 
---Inserting into users
-INSERT INTO users (user_id, user_name, password_hashed, first_name, last_name, address, phone_number, age, email, created_at, Role)
-VALUES 
-(1, 'user1', '$2y$10$hash001', 'John', 'Doe', '123 Main St, Cityville', '111-222-3333', 28, 'user1@example.com', '2025-03-01 08:00:00', 'guest'),
-(2, 'user2', '$2y$10$hash002', 'Alice', 'Smith', '456 Oak Ave, Townsville', '222-333-4444', 32, 'user2@example.com', '2025-03-01 08:05:00', 'host'),
-(3, 'user3', '$2y$10$hash003', 'Mike', 'Brown', '789 Pine Rd, Villageton', '333-444-5555', 45, 'user3@example.com', '2025-03-01 08:10:00', 'guest'),
-(4, 'user4', '$2y$10$hash004', 'Sarah', 'Lee', '101 Maple Blvd, Hamlet', '444-555-6666', 27, 'user4@example.com', '2025-03-01 08:15:00', 'host'),
-(5, 'user5', '$2y$10$hash005', 'David', 'Wilson', '202 Birch St, Metro City', '555-666-7777', 36, 'user5@example.com', '2025-03-01 08:20:00', 'guest'),
-(6, 'user6', '$2y$10$hash006', 'Emma', 'Johnson', '303 Cedar Dr, Uptown', '666-777-8888', 29, 'user6@example.com', '2025-03-01 08:25:00', 'guest'),
-(7, 'user7', '$2y$10$hash007', 'Liam', 'Williams', '404 Spruce Ln, Downtown', '777-888-9999', 40, 'user7@example.com', '2025-03-01 08:30:00', 'guest'),
-(8, 'user8', '$2y$10$hash008', 'Olivia', 'Jones', '505 Elm St, Suburbia', '888-999-0000', 33, 'user8@example.com', '2025-03-01 08:35:00', 'host'),
-(9, 'user9', '$2y$10$hash009', 'Noah', 'Davis', '606 Walnut Ave, Oldtown', '999-000-1111', 22, 'user9@example.com', '2025-03-01 08:40:00', 'guest'),
-(10, 'user10', '$2y$10$hash010', 'Ava', 'Martin', '707 Chestnut Rd, Riverside', '000-111-2222', 31, 'user10@example.com', '2025-03-01 08:45:00', 'guest');
+
+
+
+
+
+
+
 
 --Inserting values into host
 INSERT INTO host(host_id,user_id)
@@ -239,8 +338,31 @@ VALUES
 (1, 1, 'Grand Plaza', '100 Luxury Ave', 'Metropolis', 'State1', '111-222-3333', 'grandplaza@example.com', 120, 12345, 4.5),
 (2, 2, 'Sunrise Inn', '200 Ocean Dr', 'Beachside', 'State2', '222-333-4444', 'sunriseinn@example.com', 80, 23456, 4.2),
 (3, 3, 'Mountain Retreat', '300 Alpine Rd', 'Highland', 'State3', '333-444-5555', 'mountainretreat@example.com', 50, 34567, 4.8);
+INSERT INTO hotel(hotel_id, host_id, name, address, city, state, phone_number, email, total_rooms, zip_code, rating)
+VALUES
+(4, 3, 'Taj', '300 Alpine Rd', 'Highland', 'State3', '333-444-5555', 'taj@example.com', 50, 34567, 3.8);
 
---Inserting values into rooms
+-- INSERT INTO hotel (hotel_id, host_id, name, address, city, state, phone_number, email, total_rooms, zip_code, rating)
+-- VALUES
+-- (4, 4, 'Hotel Sunbeam', 'Sector 22B', 'Chandigarh', 'Punjab', '+91-172-2704011', 'sunbeamchd@example.com', 75, 160022, 4.0),
+-- (5, 5, 'The Park', '14/7, MG Road', 'Bangalore', 'Karnataka', '+91-80-25594666', 'theparkblr@example.com', 200, 560001, 4.2),
+-- (6, 6, 'Hotel City Star', '8718 D.B. Gupta Road', 'New Delhi', 'Delhi', '+91-11-43532828', 'citystardelhi@example.com', 100, 110055, 4.1),
+-- (7, 7, 'Hotel Shalimar', 'Near Railway Station', 'Jaipur', 'Rajasthan', '+91-141-2378855', 'shalimarjaipur@example.com', 150, 302006, 4.0),
+-- (8, 8, 'The Presidency', '1471/A, Nayapalli', 'Bhubaneswar', 'Odisha', '+91-674-2560801', 'presidencybbsr@example.com', 120, 751015, 4.1),
+-- (9, 9, 'Hotel Abad Plaza', 'MG Road', 'Kochi', 'Kerala', '+91-484-2381122', 'abadplaza@example.com', 180, 682035, 4.0),
+-- (10, 10, 'Hotel Hindustan International', 'A.J.C Bose Road', 'Kolkata', 'West Bengal', '+91-33-22802123', 'hhi_kolkata@example.com', 250, 700017, 4.2);
+-- INSERT INTO hotel (hotel_id, host_id, name, address, city, state, phone_number, email, total_rooms, zip_code, rating)
+-- VALUES
+-- (11, 11, 'Hotel Marine Plaza', '29, Marine Drive', 'Mumbai', 'Maharashtra', '+91-22-22851212', 'marineplaza@example.com', 80, 400020, 4.3),
+-- (12, 12, 'Hotel Suba Palace', 'Apollo Bunder, Colaba', 'Mumbai', 'Maharashtra', '+91-22-22846256', 'subapalace@example.com', 75, 400001, 4.0),
+-- (13, 13, 'Hotel Royal Orchid', '1, Golf Avenue', 'Bangalore', 'Karnataka', '+91-80-41783000', 'royalorchid@example.com', 195, 560008, 4.2),
+-- (14, 14, 'Hotel Iris', '70 Brigade Road', 'Bangalore', 'Karnataka', '+91-80-25585858', 'irisblr@example.com', 50, 560001, 4.1),
+-- (15, 15, 'Hotel Ajanta', '36, Arakashan Road', 'New Delhi', 'Delhi', '+91-11-23585511', 'ajantadelhi@example.com', 90, 110055, 3.0),
+-- (16, 16, 'The Hans Hotel', '15, Barakhamba Road', 'New Delhi', 'Delhi', '+91-11-23316899', 'hansdelhi@example.com', 75, 110001, 4.1),
+-- (17, 17, 'Hotel Golden Tulip', 'Opp. GPO, M.I. Road', 'Jaipur', 'Rajasthan', '+91-141-4268777', 'goldentulipjaipur@example.com', 110, 302001, 3.0),
+-- (18, 18, 'Hotel Arya Niwas', 'Sansar Chandra Road', 'Jaipur', 'Rajasthan', '+91-141-2372456', 'aryaniwas@example.com', 100, 302001, 4.1),
+-- (19, 19, 'The Peerless Inn', '12, Jawaharlal Nehru Road', 'Kolkata', 'West Bengal', '+91-33-44002222', 'peerlesskolkata@example.com', 168, 700013, 2.2),
+-- (20, 20, 'Lytton Hotel', '14, Sudder Street', 'Kolkata', 'West Bengal', '+91-33-22493371', 'lyttonkolkata@example.com', 80, 700016, 4.0);
 
 INSERT INTO rooms(room_id,room_number,price,capacity,status,hotel_id)
 VALUES
@@ -254,6 +376,11 @@ VALUES
 (8, 302, 190.00, 3, 'available', 3),
 (9, 303, 210.00, 4, 'unavailable', 3),
 (10, 304, 220.00, 4, 'available', 3);
+INSERT INTO rooms(room_id,room_number,price,capacity,status,hotel_id)
+VALUES
+(11, 101, 520.00, 3, 'available', 4),
+(12, 102, 320.00, 4, 'available', 4);
+
 
 --Inserting values into amenities
 
@@ -414,4 +541,122 @@ VALUES
 (8, 2, 'http://example.com/images/hotel2_img3.jpg'),
 (9, 3, 'http://example.com/images/hotel3_img3.jpg'),
 (10, 2, 'http://example.com/images/hotel2_img4.jpg');
+
+
+-- FUNCTIONS 
+
+
+CREATE OR REPLACE FUNCTION get_average_rating(hotel_id INTEGER)
+RETURNS DECIMAL AS $$
+DECLARE
+    avg_rating DECIMAL;
+BEGIN
+    SELECT AVG(hotel.rating) INTO avg_rating
+    FROM Review
+    JOIN bookings ON review.booking_id = bookings.booking_id 
+    JOIN rooms ON rooms.room_id = bookings.room_id
+    JOIN hotel ON hotel.hotel_id = rooms.hotel_id
+    WHERE hotel.hotel_id = get_average_rating.hotel_id;
+
+    RETURN COALESCE(avg_rating, 0);
+END;
+$$ LANGUAGE plpgsql;
+
+select get_average_rating(3);
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_available_rooms_by_location(
+    p_city TEXT,
+    p_check_in_date DATE DEFAULT NULL,
+    p_check_out_date DATE DEFAULT NULL,
+    p_min_price DECIMAL DEFAULT 0,
+    p_max_price DECIMAL DEFAULT 99999,
+    p_min_capacity INTEGER DEFAULT 1,
+    p_min_rating DECIMAL DEFAULT 0
+)
+RETURNS TABLE(
+    room_id INTEGER,
+    hotel_name TEXT,
+    room_number INTEGER,
+    price DECIMAL,
+    capacity INTEGER,
+    hotel_rating DECIMAL
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT r.room_id,CAST(h.name AS TEXT) AS hotel_name, r.room_number, r.price, r.capacity, h.rating
+    FROM rooms r
+    JOIN hotel h ON r.hotel_id = h.hotel_id
+    WHERE h.city = p_city
+    AND r.price BETWEEN p_min_price AND p_max_price
+    AND r.capacity >= p_min_capacity
+    AND h.rating >= p_min_rating
+    AND( p_check_in_date IS NULL OR p_check_out_date IS NULL 
+			OR  r.room_id NOT IN (
+        SELECT b.room_id FROM bookings b
+        WHERE b.status NOT IN ('cancelled')
+        AND (p_check_in_date < check_out_date AND p_check_out_date > check_in_date)
+		)
+    )
+    ORDER BY r.price ASC; -- Default sorting (modify if needed)
+END;
+$$ LANGUAGE plpgsql;
+
+
+select * from get_available_rooms_by_location('Highland',NULL,NULL,0,1000,3);
+
+
+
+
+CREATE OR REPLACE FUNCTION can_book_room(
+    p_room_id INTEGER,
+    p_check_in_date DATE,
+    p_check_out_date DATE
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+    is_available BOOLEAN;
+BEGIN
+    -- Check if the room is available for the given dates
+    SELECT COUNT(*) = 0 INTO is_available
+    FROM bookings
+    WHERE room_id = p_room_id
+    AND status NOT IN ('cancelled')  -- Ignore cancelled bookings
+    AND (p_check_in_date < check_out_date AND p_check_out_date > check_in_date);
+
+    RETURN is_available; -- TRUE if available, FALSE if booked
+END;
+$$ LANGUAGE plpgsql;
+select * from can_book_room(10,'2025-08-15','2025-08-20');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- SELECT * FROM get_average_rating;
+
+
+
+
+
+
+
+
+
+
 
