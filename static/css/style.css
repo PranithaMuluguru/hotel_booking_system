@@ -1,0 +1,50 @@
+:root {
+    --primary: #2c3e50;
+    --secondary: #3498db;
+    --light: #ecf0f1;
+    --dark: #2c3e50;
+}
+
+body {
+    background: url('../images/hotel-bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+.navbar {
+    background: rgba(44, 62, 80, 0.9) !important;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--secondary);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.booking-card {
+    transition: transform 0.3s;
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+}
+
+.hotel-card img {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+.alert {
+    border-radius: 10px;
+}

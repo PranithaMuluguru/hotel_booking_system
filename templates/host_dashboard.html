@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <h2 class="mb-4">My Hotels</h2>
+    {% for hotel in hotels %}
+    <div class="col-md-4 mb-4">
+        <div class="card hotel-card">
+            <div class="card-body">
+                <h5 class="card-title">{{ hotel[2] }}</h5>
+                <div class="card-text">
+                    <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ hotel[4] }}, {{ hotel[5] }}</p>
+                    <p class="mb-1"><i class="bi bi-star-fill text-warning"></i> {{ hotel[10] }}/5</p>
+                    <p class="mb-1"><i class="bi bi-door-closed"></i> {{ hotel[8] }} rooms</p>
+                    <p class="mb-1 text-success"><strong>Bookings:</strong> {{ hotel[11] }}</p>
+                </div>
+                <div class="mt-3">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Manage Rooms</a>
+                    <a href="#" class="btn btn-sm btn-outline-success">View Bookings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No hotels registered yet. Contact admin to list your property.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h2 class="mb-4 text-center">Find Your Perfect Stay</h2>
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="city" placeholder="Destination" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" name="check_in">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" name="check_out">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" name="min_price" placeholder="Min Price ($)">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" name="max_price" placeholder="Max Price ($)">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="min_capacity">
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="min_rating">
+                            <option value="0">Any Rating</option>
+                            <option value="3">3 Stars+</option>
+                            <option value="4">4 Stars+</option>
+                            <option value="5">5 Stars</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
