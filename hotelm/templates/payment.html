@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="h5 mb-0"><i class="fas fa-credit-card me-2"></i>Payment Details - {{ booking.hotel_name }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Booking Summary -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Booking Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ booking.room_type }} Room</h5>
+                            <div class="mb-3">
+                                <p class="mb-1">
+                                    <i class="fas fa-calendar-check text-primary me-2"></i>
+                                    Check-in: <strong>{{ booking.check_in|format_date }}</strong>
+                                </p>
+                                <p class="mb-1">
+                                    <i class="fas fa-calendar-times text-primary me-2"></i>
+                                    Check-out: <strong>{{ booking.check_out|format_date }}</strong>
+                                </p>
+                            </div>
+                            <div class="alert alert-primary">
+                                <h6 class="alert-heading"><i class="fas fa-coins me-2"></i>Pricing Breakdown</h6>
+                                <hr>
+                                <dl class="row mb-0">
+                                    <dt class="col-6">Price per night:</dt>
+                                    <dd class="col-6 text-end">${{ "%.2f"|format(price_per_night) }}</dd>
+
+                                    <dt class="col-6">Nights:</dt>
+                                    <dd class="col-6 text-end">{{ nights }}</dd>
+
+                                    <dt class="col-6">Discount:</dt>
+                                    <dd class="col-6 text-end text-danger">-${{ "%.2f"|format(booking.discount) }}</dd>
+
+                                    <dt class="col-6">Total:</dt>
+                                    <dd class="col-6 text-end fw-bold">${{ "%.2f"|format(booking.total) }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!-- Payment Section -->
+<div class="col-lg-6">
+    <div class="card border-success">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('payment') }}">
+                <!-- Payment Method Dropdown -->
+                <div class="mb-4">
+                    <label class="form-label">Payment Method</label>
+                    <div class="payment-method-dropdown">
+                        <div class="dropdown-trigger" onclick="togglePaymentMethods()">
+                            <span class="selected-method">
+                                <i class="fab fa-cc-{{ selected_method|lower }} me-2"></i>
+                                {{ selected_method|replace('_', ' ')|title }}
+                            </span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <div class="dropdown-options">
+                            {% for method in payment_methods %}
+                            <div class="dropdown-option" onclick="selectPaymentMethod('{{ method }}')">
+                                <i class="fab fa-cc-{{ method|lower }} me-2"></i>
+                                {{ method|replace('_', ' ')|title }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="payment_method" id="payment_method" value="{{ selected_method }}"
+                            required>
+                    </div>
+                </div>
+                <!-- Card Details (Always Visible) -->
+                <div class="card-details bg-light p-4 rounded-3">
+                    <h6 class="mb-4 text-primary"><i class="fas fa-credit-card me-2"></i>Card Information</h6>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="card_number" name="card_number" placeholder="0000 0000 0000 0000"
+                            pattern="\d{4}\s?\d{4}\s?\d{4}\s?\d{4}" required>
+                        <label for="card_number"><i class="fas fa-credit-card me-2"></i>Card Number</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="card_name" name="card_name" placeholder="John Doe"
+                            required>
+                        <label for="card_name"><i class="fas fa-user me-2"></i>Name on Card</label>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6 form-floating">
+                            <input type="text" class="form-control" id="expiry" name="expiry" placeholder="MM/YY"
+                                pattern="\d{2}/\d{2}" required>
+                            <label for="expiry"><i class="fas fa-calendar-alt me-2"></i>Expiry Date</label>
+                        </div>
+                        <div class="col-md-6 form-floating">
+                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123"
+                                pattern="\d{3}" required>
+                            <label for="cvv"><i class="fas fa-lock me-2"></i>CVV</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-lock me-2"></i>Confirm Payment
+                    </button>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                </div>
+                </form>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <style>
+                    .payment-method-dropdown {
+                        position: relative;
+                        border: 2px solid #dee2e6;
+                        border-radius: 8px;
+                        background: white;
+                    }
+                
+                    .dropdown-trigger {
+                        padding: 1rem;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                
+                    .dropdown-trigger:hover {
+                        background-color: #f8f9fa;
+                    }
+                
+                    .dropdown-arrow {
+                        transition: transform 0.3s ease;
+                    }
+                
+                    .dropdown-options {
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        right: 0;
+                        background: white;
+                        border: 2px solid #dee2e6;
+                        border-top: none;
+                        border-radius: 0 0 8px 8px;
+                        max-height: 0;
+                        overflow: hidden;
+                        transition: max-height 0.3s ease;
+                        z-index: 1000;
+                    }
+                
+                    .payment-method-dropdown.open .dropdown-options {
+                        max-height: 300px;
+                    }
+                
+                    .payment-method-dropdown.open .dropdown-arrow {
+                        transform: rotate(180deg);
+                    }
+                
+                    .dropdown-option {
+                        padding: 1rem;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        transition: all 0.3s ease;
+                    }
+                
+                    .dropdown-option:hover {
+                        background-color: #f1f1f1;
+                    }
+                
+                    .dropdown-option:not(:last-child) {
+                        border-bottom: 1px solid #eee;
+                    }
+                
+                    .selected-method {
+                        display: flex;
+                        align-items: center;
+                    }
+                </style>
+                
+                <script>
+                    let dropdownOpen = false;
+
+                    function togglePaymentMethods() {
+                        const dropdown = document.querySelector('.payment-method-dropdown');
+                        dropdownOpen = !dropdownOpen;
+                        dropdown.classList.toggle('open', dropdownOpen);
+                    }
+
+                    function selectPaymentMethod(method) {
+                        document.getElementById('payment_method').value = method;
+                        document.querySelector('.selected-method').innerHTML = `
+                        <i class="fab fa-cc-${method.toLowerCase()} me-2"></i>
+                        ${method.replace('_', ' ')}
+                    `;
+                        togglePaymentMethods();
+                    }
+
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function (e) {
+                        if (!e.target.closest('.payment-method-dropdown')) {
+                            document.querySelector('.payment-method-dropdown').classList.remove('open');
+                            dropdownOpen = false;
+                        }
+                    });
+                </script>
+                {% endblock %}

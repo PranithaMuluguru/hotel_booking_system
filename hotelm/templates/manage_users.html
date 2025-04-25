@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom purple theme color */
+        .text-purple {
+            color: #6f42c1;
+            /* Bootstrap purple */
+        }
+
+        .btn-purple {
+            background-color: #6f42c1;
+            border-color: #6f42c1;
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background-color: #5a3d9a;
+            border-color: #5a3d9a;
+            color: white;
+        }
+
+        .user-table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            /* Updated gradient using purple */
+            background: linear-gradient(135deg, #6f42c1, #a450e8);
+            color: white;
+        }
+
+        .role-badge {
+            padding: 0.4em 0.9em;
+            /* Adjusted padding */
+            border-radius: 20px;
+            font-size: 0.85em;
+            /* Slightly smaller */
+            font-weight: 500;
+            vertical-align: middle;
+        }
+
+        /* Role-specific badge colors */
+        .role-admin {
+            background-color: #e0cffc;
+            color: #6f42c1;
+        }
+
+        /* Light purple bg, dark purple text */
+        .role-host {
+            background-color: #cfe2ff;
+            color: #0d6efd;
+        }
+
+        /* Bootstrap primary subtle */
+        .role-guest {
+            background-color: #e2e3e5;
+            color: #495057;
+        }
+
+        /* Bootstrap secondary subtle */
+
+
+        .action-btns .btn,
+        .action-btns .btn-sm {
+            /* Ensure btn-sm is also targeted */
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btns .btn:hover,
+        .action-btns .btn-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            /* Removed cursor: pointer; as it's often confusing on non-clickable rows */
+        }
+
+        /* Custom styling for Add User button */
+        .btn-add-user {
+            background: linear-gradient(135deg, #6f42c1, #a450e8);
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+        }
+
+        .btn-add-user:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(111, 66, 193, 0.6);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    {% include 'admin_navbar.html' %}
+
+    <div class="container py-4">
+
+        {# Display flash messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-purple">
+                <i class="fas fa-users-cog me-2"></i>User Management
+            </h2>
+            {# --- CORRECTED LINK FOR ADD USER BUTTON --- #}
+            <a href="{{ url_for('admin_add_user') }}" class="btn btn-primary btn-lg btn-add-user">
+                <i class="fas fa-user-plus me-2"></i>Add New User
+            </a>
+            {# ----------------------------------------- #}
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-secondary">
+                    <i class="fas fa-list-ol me-2"></i>Registered Users
+                </h5>
+                <span class="badge bg-light text-secondary">Total: {{ users|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    {% if users %}
+                    <table class="table table-hover align-middle mb-0 user-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="ps-4 py-3">ID</th>
+                                <th class="py-3">Username</th>
+                                <th class="py-3">Full Name</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Role</th>
+                                <th class="py-3">Joined</th>
+                                <th class="text-center py-3">Actions</th> {# Centered Actions #}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            {# Prevent admin from seeing delete option for themselves #}
+                            {% set can_delete = user.user_id != session.get('user_id') %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#{{ user.user_id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {# Optional: Add avatar/icon #}
+                                        <div class="ms-1"> {# Adjusted margin #}
+                                            <p class="mb-0 fw-bold">{{ user.user_name | e }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ user.first_name | default('', true) | e }} {{ user.last_name | default('', true)
+                                    | e }}</td>
+                                <td>{{ user.email | default('N/A', true) | e }}</td>
+                                <td>
+                                    {# More specific role classes for styling #}
+                                    <span class="role-badge role-{{ user.role | lower }}">
+                                        {% if user.role == 'admin' %}
+                                        <i class="fas fa-user-shield me-1"></i>Admin
+                                        {% elif user.role == 'host' %}
+                                        <i class="fas fa-user-tie me-1"></i>Host
+                                        {% else %}
+                                        <i class="fas fa-user me-1"></i>Guest
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if user.created_at %}
+                                    <small class="text-muted"
+                                        title="{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        {{ user.created_at.strftime('%b %d, %Y') }} {# Shorter format #}
+                                    </small>
+                                    {% else %}
+                                    <small class="text-muted">N/A</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center action-btns"> {# Centered Actions #}
+                                    {# Optional Edit Button - Add later if needed #}
+                                    {# <a href="{{ url_for('admin_edit_user', user_id=user.user_id) }}"
+                                        class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a> #}
+
+                                    {# --- CORRECTED DELETE BUTTON FORM --- #}
+                                    {% if can_delete %} {# Only show delete button if not the current admin #}
+                                    <form action="{{ url_for('admin_delete_user', user_id=user.user_id) }}"
+                                        method="post" class="d-inline">
+                                        {# Optional: Add CSRF token here if using Flask-WTF/CSRFProtect #}
+                                        {# <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> #}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure you want to permanently delete user \'{{ user.user_name | e }}\'? This action cannot be undone.')">
+                                            <i class="fas fa-trash-alt me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted fst-italic small">(Current User)</span>
+                                    {% endif %}
+                                    {# ---------------------------------- #}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="alert alert-info text-center m-3" role="alert">
+                        No users found. <a href="{{ url_for('admin_add_user') }}" class="alert-link">Add the first
+                            one!</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if users %}
+            <div class="card-footer bg-white text-muted text-sm py-2">
+                Displaying {{ users|length }} user(s)
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

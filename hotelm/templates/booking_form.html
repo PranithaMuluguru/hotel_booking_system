@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Book Rooms</title>
+    <!-- Include same headers -->
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2>Book Multiple Rooms</h2>
+
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" name="check_in" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" name="check_out" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" name="guests" min="1" value="1">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Available Rooms -->
+        <div class="row" id="roomResults">
+            {% for room in available_rooms %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 position-relative">
+                    {% if room.discount %}
+                    <span class="discount-badge badge bg-danger">
+                        Save {% room.discount %}%
+                    </span>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{% room.type %} Room</h5>
+                        <p class="card-text">
+                            Capacity: {% room.capacity %}<br>
+                            Price: ${% room.price %}/night<br>
+                            Amenities: {% room.amenities|join:", " %}
+                        </p>
+                        <button class="btn btn-primary add-to-cart" data-room-id="{% room.id %}"
+                            data-price="{% room.price %}">
+                            Add to Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Booking Cart -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4>Your Selection</h4>
+            </div>
+            <div class="card-body">
+                <div id="bookingCart">
+                    <!-- Dynamic cart items -->
+                </div>
+                <div class="mt-3">
+                    <h5>Total: $<span id="totalPrice">0</span></h5>
+                    <button class="btn btn-success" id="proceedToPayment">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for handling cart functionality
+    </script>
+</body>
+
+</html>

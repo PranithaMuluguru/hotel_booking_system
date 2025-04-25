@@ -1,0 +1,91 @@
+<!-- templates/admin_navbar.html -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container-fluid">
+
+        {# Brand/Logo linked to Admin Dashboard #}
+        <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+            <i class="fas fa-user-shield me-2"></i>Admin Panel
+        </a>
+
+        {# Mobile Toggler Button #}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarContent"
+            aria-controls="adminNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {# Collapsible Content #}
+        <div class="collapse navbar-collapse" id="adminNavbarContent">
+
+            {# Main Navigation Links (Left Aligned) #}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}"
+                        href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt fa-fw me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'manage_users' or request.endpoint == 'admin_add_user' %}active{% endif %}"
+                        href="{{ url_for('manage_users') }}">
+                        <i class="fas fa-users-cog fa-fw me-1"></i>Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'manage_hotels' or request.endpoint == 'admin_add_hotel' %}active{% endif %}"
+                        href="{{ url_for('manage_hotels') }}">
+                        <i class="fas fa-hotel fa-fw me-1"></i>Hotels
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'manage_bookings' %}active{% endif %}"
+                        href="{{ url_for('manage_bookings') }}">
+                        <i class="fas fa-calendar-check fa-fw me-1"></i>Bookings
+                    </a>
+                </li>
+                {# Optional: Link back to the main site #}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}" target="_blank" title="View Main Site">
+                        <i class="fas fa-home fa-fw me-1"></i>View Site
+                    </a>
+                </li>
+            </ul>
+
+            {# User Info & Logout (Right Aligned) #}
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                {% if session.get('user_id') %}
+                <li class="nav-item">
+                    <span class="navbar-text me-3">
+                        <i class="fas fa-user fa-fw me-1"></i> Welcome, <strong>{{ session.username | default('Admin') |
+                            e }}</strong>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    {# Use a link for GET-based logout, or a form for POST-based logout #}
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-sign-out-alt fa-fw me-1"></i>Logout
+                    </a>
+                    {# Example using a form for POST logout (if your route uses POST)
+                    <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-sign-out-alt fa-fw me-1"></i>Logout
+                        </button>
+                    </form>
+                    #}
+                </li>
+                {% else %}
+                {# Fallback if somehow session is lost but page loaded - unlikely with @admin_required #}
+                <li class="nav-item">
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-sign-in-alt fa-fw me-1"></i>Login
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+        </div> {# End .collapse #}
+    </div> {# End .container-fluid #}
+</nav>
+
+{# Add required JS for Bootstrap components (like the toggler) if not already included in base template #}
+{#
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> #}

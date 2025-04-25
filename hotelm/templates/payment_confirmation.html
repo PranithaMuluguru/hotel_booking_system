@@ -1,0 +1,70 @@
+{# templates/payment_confirmation.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card border-success shadow-lg">
+                <div class="card-header bg-success text-white text-center p-4">
+                    <i class="fas fa-check-circle fa-3x mb-3"></i>
+                    <h2 class="card-title mb-1">Payment Successful!</h2>
+                    <p class="lead mb-0">Your booking is confirmed.</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-center mb-4">Thank you for your booking! Here are the details of your reservation:
+                    </p>
+
+                    <div class="mb-4 p-3 bg-light rounded border">
+                        <h5 class="mb-3 text-success"><i class="fas fa-receipt me-2"></i>Booking Summary</h5>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4"><i class="fas fa-hashtag me-2 text-muted"></i>Booking ID:</dt>
+                            <dd class="col-sm-8">{{ summary.booking_id }}</dd>
+
+                            <dt class="col-sm-4"><i class="fas fa-calendar-check me-2 text-muted"></i>Check-in:</dt>
+                            <dd class="col-sm-8">{{ summary.check_in|format_date }}</dd>
+
+                            <dt class="col-sm-4"><i class="fas fa-calendar-alt me-2 text-muted"></i>Check-out:</dt>
+                            <dd class="col-sm-8">{{ summary.check_out|format_date }}</dd>
+                        </dl>
+                    </div>
+
+                    <div class="mb-4 p-3 bg-light rounded border">
+                        <h5 class="mb-3 text-success"><i class="fas fa-credit-card me-2"></i>Payment Details</h5>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4"><i class="fas fa-wallet me-2 text-muted"></i>Total Paid:</dt>
+                            <dd class="col-sm-8"><strong class="text-success fs-5">₹{{ summary.total }}</strong></dd>
+
+                            <dt class="col-sm-4"><i class="fas fa-money-check-alt me-2 text-muted"></i>Payment Method:
+                            </dt>
+                            <dd class="col-sm-8">{{ summary.method.replace('_',' ')|title }}</dd>
+
+                            <dt class="col-sm-4"><i class="fas fa-clock me-2 text-muted"></i>Payment Date:</dt>
+                            <dd class="col-sm-8">{{ summary.date }}</dd> {# Assuming summary.date is already formatted
+                            #}
+                        </dl>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="text-muted mb-3">A confirmation email has also been sent to your registered address.
+                        </p>
+                        <a href="{{ url_for('guest_dashboard') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Ensure Font Awesome is loaded in your base.html #}
+{# Example link (adjust version if needed):
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+#}
+{% endblock %}

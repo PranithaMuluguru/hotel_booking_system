@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Hotels - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hotel-table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            color: white;
+        }
+
+        .action-btns .btn {
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btns .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Removed status-badge styles as it wasn't used */
+
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            /* Removed cursor: pointer; as it's default for links/buttons */
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    {# Assumes admin_navbar.html exists and works #}
+    {% include 'admin_navbar.html' %}
+
+    <div class="container py-4">
+        {# Display flash messages if any #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-primary">
+                <i class="fas fa-hotel me-2"></i>Hotel Management
+            </h2>
+            {# --- CORRECTED LINK --- #}
+            <a href="{{ url_for('admin_add_hotel') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>New Hotel
+            </a>
+            {# ---------------------- #}
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0">
+                <h5 class="mb-0 text-secondary">
+                    <i class="fas fa-list-alt me-2"></i>Registered Hotels
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    {% if hotels %}
+                    <table class="table table-hover align-middle mb-0 hotel-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>Hotel Name</th>
+                                <th>Host</th>
+                                <th>Location</th>
+                                <th>Rooms</th>
+                                <th class="text-center">Actions</th> {# Changed alignment for better centering #}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for hotel in hotels %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#{{ hotel.hotel_id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {# Optional: Add an icon or image here if needed #}
+                                        <div class="ms-1"> {# Reduced margin a bit #}
+                                            <p class="mb-0 fw-bold">{{ hotel.name | e }}</p> {# Added |e to escape
+                                            potentially harmful characters #}
+                                        </div>
+                                    </div>
+                                </td>
+                                    <td>
+                                        {# Use host_username from the corrected Python query #}
+                                        <span class="badge bg-info bg-opacity-10 text-info p-2">
+                                            <i class="fas fa-user-tie me-1"></i>{{ hotel.host_username | default('N/A') | e }}
+                                        </span>
+                                    </td>
+                                    
+                                    
+                                    
+
+                                <td>
+                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                    {{ hotel.city | e }}, {{ hotel.state | e }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                                        <i class="fas fa-door-open me-1"></i>{{ hotel.total_rooms | default('0') }}
+                                    </span>
+                                </td>
+                                <td class="text-center action-btns"> {# Centered actions #}
+                                    {# Optional Edit Button - Link to an edit route if you create one #}
+                                    {#
+                                    <a href="{{ url_for('admin_edit_hotel', hotel_id=hotel.hotel_id) }}"
+                                        class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    #}
+
+                                    {# Delete Button Form #}
+                                    <form action="{{ url_for('admin_delete_hotel', hotel_id=hotel.hotel_id) }}"
+                                        method="post" class="d-inline">
+                                        {# CSRF token should be added here if using Flask-WTF #}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure you want to delete the hotel \'{{ hotel.name | e }}\'? This action might be irreversible.')">
+                                            <i class="fas fa-trash-alt me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="alert alert-info text-center m-3" role="alert">
+                        No hotels found. <a href="{{ url_for('admin_add_hotel') }}" class="alert-link">Add the first
+                            one!</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if hotels %}
+            <div class="card-footer bg-white text-muted text-sm py-2">
+                Total Hotels: {{ hotels|length }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

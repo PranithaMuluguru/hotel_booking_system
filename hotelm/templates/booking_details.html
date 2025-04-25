@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">
+                <i class="fas fa-file-invoice-dollar me-2"></i>
+                Booking #{{ booking.booking_id }}
+            </h2>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Guest Information -->
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h5 class="mb-3"><i class="fas fa-user-tag me-2"></i>Guest Details</h5>
+                        <dl class="row">
+                            <dt class="col-sm-4">Name</dt>
+                            <dd class="col-sm-8">{{ booking.guest_name }}</dd>
+
+                            <dt class="col-sm-4">Check-in</dt>
+                            <dd class="col-sm-8">{{ booking.check_in_date|format_date }}</dd>
+
+                            <dt class="col-sm-4">Check-out</dt>
+                            <dd class="col-sm-8">{{ booking.check_out_date|format_date }}</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Hotel Information -->
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h5 class="mb-3"><i class="fas fa-hotel me-2"></i>Property Details</h5>
+                        <dl class="row">
+                            <dt class="col-sm-4">Hotel</dt>
+                            <dd class="col-sm-8">{{ booking.hotel_name }}</dd>
+
+                            <dt class="col-sm-4">Room</dt>
+                            <dd class="col-sm-8">#{{ booking.room_number }}</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="col-12">
+                    <div class="bg-light p-3 rounded">
+                        <h5 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between">
+                                    <span>Total Amount:</span>
+                                    <strong>${{ booking.total_price }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between">
+                                    <span>Status:</span>
+                                    <span
+                                        class="badge bg-{{ 'success' if booking.payment_status == 'completed' else 'warning' }}">
+                                        {{ booking.payment_status|title }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between">
+                                    <span>Paid On:</span>
+                                    <span>{{ booking.payment_date|format_date }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

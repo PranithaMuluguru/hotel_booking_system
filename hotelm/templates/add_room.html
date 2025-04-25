@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Add New Room to {{ hotel.name }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Room Number</label>
+                        <input type="number" name="room_number" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Price per Night</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" name="price" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Room Images</label>
+                        <input type="file" class="form-control" name="images" multiple accept="image/*">
+                        <small class="text-muted">Select multiple images (PNG, JPG, JPEG, GIF)</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Capacity</label>
+                        <select name="capacity" class="form-select" required>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Room Type</label>
+                        <select name="room_type" class="form-select" required>
+                            <option value="AC">Air Conditioned</option>
+                            <option value="Non-AC">Non Air Conditioned</option>
+                            <option value="Suite">Suite</option>
+                            <option value="Deluxe">Deluxe</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Add Room
+                        </button>
+                        <a href="{{ url_for('manage_rooms', hotel_id=hotel.hotel_id) }}"
+                            class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

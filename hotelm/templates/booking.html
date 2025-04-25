@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">Confirm Your Stay</h1>
+        <a href="{{ url_for('room_details', room_id=room.room_id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Room
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Booking Form Card -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="h5 mb-0">Booking Details</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('book', room_id=room.room_id) }}" novalidate>
+                        <!-- Date Inputs -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="check_in" class="form-label">
+                                    <i class="fas fa-calendar-check me-2"></i>Check-in Date
+                                </label>
+                                <input type="date" class="form-control" id="check_in" name="check_in"
+                                    min="{{ min_date }}" required aria-describedby="checkInHelp">
+                                <small id="checkInHelp" class="form-text text-muted">
+                                    Earliest available: {{ min_date }}
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="check_out" class="form-label">
+                                    <i class="fas fa-calendar-times me-2"></i>Check-out Date
+                                </label>
+                                <input type="date" class="form-control" id="check_out" name="check_out"
+                                    min="{{ min_date }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Discount Selection -->
+                        <div class="mb-4">
+                            <label for="promo_code" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Select Discount
+                            </label>
+                            <select class="form-select" id="promo_code" name="promo_code" aria-describedby="promoHelp">
+                                <option value="">No Discount</option>
+                                {% for discount in discounts %}
+                                <option value="{{ discount.promo_code }}" data-amount="{{ discount.discount_amount }}"
+                                    title="{{ discount.description }}">
+                                    {{ discount.promo_code }} (Save ${{ discount.discount_amount }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small id="promoHelp" class="form-text text-muted">
+                                Valid discounts: {{ discounts|length }} available
+                            </small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-lg btn-success">
+                                <i class="fas fa-calculator me-2"></i>
+                                Calculate Total & Continue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkIn = document.getElementById('check_in');
+        const checkOut = document.getElementById('check_out');
+
+        checkIn.addEventListener('change', function () {
+            checkOut.min = this.value;
+            if (new Date(checkOut.value) < new Date(this.value)) {
+                checkOut.value = this.value;
+            }
+        });
+
+        // Initialize check-out min date if check-in has value
+        if (checkIn.value) {
+            checkOut.min = checkIn.value;
+        }
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-radius: 0 !important;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

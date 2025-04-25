@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Edit Room #{{ room.room_number }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Room Number</label>
+                        <input type="number" name="room_number" class="form-control" value="{{ room.room_number }}"
+                            required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Price per Night</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" name="price" class="form-control"
+                                value="{{ '%.2f'|format(room.price|float) }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Capacity</label>
+                        <select name="capacity" class="form-select" required>
+                            {% for n in range(1, 5) %}
+                            <option value="{{ n }}" {% if n==room.capacity %}selected{% endif %}>
+                                {{ n }} Guest{% if n > 1 %}s{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Add More Images (Optional)</label>
+                        <input type="file" class="form-control" id="images" name="images" multiple>
+                        <small class="form-text text-muted">You can select multiple files. Allowed types: png, jpg, jpeg, gif, webp.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Room Type</label>
+                        <select name="room_type" class="form-select" required>
+                            {% for type in ['AC', 'Non-AC', 'Suite', 'Deluxe'] %}
+                            <option value="{{ type }}" {% if type==room.room_type %}selected{% endif %}>
+                                {{ type }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if existing_images %}
+                    <div class="mb-3">
+                        <label class="form-label">Current Images:</label>
+                        <div class="row">
+                            {% for image_path in existing_images %}
+                            <div class="col-md-3 mb-2">
+                                <img src="{{ url_for('static', filename='uploads/' + image_path) }}" class="room-image" alt="Room photo">
+                                <p><small>{{ image_path.split('/')[-1] }}</small></p>
+                                {# Optional: Add delete functionality here if needed #}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{{ url_for('manage_rooms', hotel_id=room.hotel_id) }}"
+                            class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

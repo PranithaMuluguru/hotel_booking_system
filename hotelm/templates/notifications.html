@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Notifications</h3>
+<ul class="list-group">
+    {% for n in notes %}
+    <li class="list-group-item">
+        <strong>{{ n.notification_date }}:</strong> {{ n.message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

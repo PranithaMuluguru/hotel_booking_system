@@ -1,0 +1,88 @@
+<!-- templates/search.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Search Available Rooms</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control" value="{{ form_vals.city }}" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Check-in Date</label>
+                    <input type="date" name="check_in" id="check_in" class="form-control"
+                        value="{{ form_vals.check_in }}" min="{{ today_date }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Check-out Date</label>
+                    <input type="date" name="check_out" id="check_out" class="form-control"
+                        value="{{ form_vals.check_out }}" min="{{ today_date }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Minimum Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" name="min_price" class="form-control" value="{{ form_vals.min_price }}"
+                            step="10" min="0">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Maximum Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" name="max_price" class="form-control" value="{{ form_vals.max_price }}"
+                            step="10" min="0">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Guests</label>
+                    <input type="number" name="min_capacity" class="form-control" value="{{ form_vals.min_capacity }}"
+                        min="1">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Min Rating</label>
+                    <select name="min_rating" class="form-select">
+                        <option value="0" {% if form_vals.min_rating==0 %}selected{% endif %}>Any</option>
+                        <option value="3" {% if form_vals.min_rating==3 %}selected{% endif %}>3+</option>
+                        <option value="4" {% if form_vals.min_rating==4 %}selected{% endif %}>4+</option>
+                        <option value="5" {% if form_vals.min_rating==5 %}selected{% endif %}>5</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Search Rooms
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+  
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inEl = document.getElementById('check_in');
+        const outEl = document.getElementById('check_out');
+
+        inEl.addEventListener('change', () => {
+            // Set checkout’s min = selected check-in
+            outEl.min = inEl.value || "{{ today_date }}";
+            if (outEl.value < outEl.min) {
+                outEl.value = outEl.min;
+            }
+        });
+    });
+</script>
+{% endblock %}

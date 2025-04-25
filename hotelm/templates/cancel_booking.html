@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Cancel Booking #{{ booking_id }}</h3>
+<form method="post">
+    <div class="mb-3">
+        <label for="reason" class="form-label">Reason for Cancellation</label>
+        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back</a>
+</form>
+{% endblock %}

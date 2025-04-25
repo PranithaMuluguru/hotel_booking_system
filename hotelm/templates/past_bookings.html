@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Past Bookings</title>
+    <!-- Include same headers as dashboard -->
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2>Booking History</h2>
+
+        <!-- Booking Table -->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Dates</th>
+                    <th>Hotel</th>
+                    <th>Rooms</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in past_bookings %}
+                <tr>
+                    <td>{% booking.check_in %} - {% booking.check_out %}</td>
+                    <td>{% booking.hotel_name %}</td>
+                    <td>{% booking.rooms|join:", " %}</td>
+                    <td>${% booking.total_price %}</td>
+                    <td>
+                        <span class="badge bg-{% booking.status_color %}">
+                            {% booking.status %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if booking.can_review %}
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#reviewModal"
+                            data-booking-id="{% booking.id %}">
+                            Write Review
+                        </button>
+                        {% endif %}
+                        {% if booking.can_cancel %}
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal"
+                            data-booking-id="{% booking.id %}">
+                            Cancel
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal">
+        <!-- Modal content for reviews -->
+    </div>
+
+    <!-- Cancellation Modal -->
+    <div class="modal fade" id="cancelModal">
+        <!-- Modal content for cancellations -->
+    </div>
+</body>
+
+</html>

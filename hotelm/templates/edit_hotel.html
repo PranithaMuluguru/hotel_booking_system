@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Hotel: {{ hotel.name }}</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('edit_hotel', hotel_id=hotel.hotel_id) }}">
+        {# Add CSRF token if you are using Flask-WTF #}
+        {# {{ form.csrf_token }} #}
+
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label for="hotelName" class="form-label">Hotel Name</label>
+                <input type="text" class="form-control" id="hotelName" name="name" value="{{ hotel.name or '' }}"
+                    required>
+            </div>
+            
+
+            <div class="col-12 mb-3">
+                <label for="hotelAddress" class="form-label">Address</label>
+                <input type="text" class="form-control" id="hotelAddress" name="address"
+                    value="{{ hotel.address or '' }}" required>
+            </div>
+
+            <div class="col-md-5 mb-3">
+                <label for="hotelCity" class="form-label">City</label>
+                <input type="text" class="form-control" id="hotelCity" name="city" value="{{ hotel.city or '' }}"
+                    required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="hotelState" class="form-label">State</label>
+                <input type="text" class="form-control" id="hotelState" name="state" value="{{ hotel.state or '' }}"
+                    required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="hotelZipCode" class="form-label">Zip Code</label>
+                <input type="text" class="form-control" id="hotelZipCode" name="zip_code"
+                    value="{{ hotel.zip_code or '' }}" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="hotelEmail" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="hotelEmail" name="email" value="{{ hotel.email or '' }}"
+                    required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="hotelPhone" class="form-label">Phone Number</label>
+                {# *** IMPORTANT: Changed name to 'phone_number' to match SQL *** #}
+                <input type="tel" class="form-control" id="hotelPhone" name="phone_number"
+                    value="{{ hotel.phone_number or '' }}" required>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('host_dashboard') }}" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Update Hotel
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

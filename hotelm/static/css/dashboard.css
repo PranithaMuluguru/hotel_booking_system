@@ -1,0 +1,40 @@
+/* Booking Table Enhancements */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+}
+
+.badge-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.action-buttons .btn {
+    padding: 0.25rem 0.5rem;
+    margin: 0 2px;
+}
+
+/* Status Indicators */
+.booking-status {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-confirmed {
+    background-color: #28a745;
+}
+
+.status-pending {
+    background-color: #ffc107;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+}

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="h3 mb-1 text-gray-800">Dashboard</h1>
+            
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Profile Dropdown on Left Side -->
+            <div class="dropdown me-2">
+                <button class="btn btn-link dropdown-toggle d-flex align-items-center text-dark text-decoration-none"
+                    type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-2 fs-5"></i>
+                    {{ user.first_name }} {{ user.last_name }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                            <i class="fas fa-user me-2"></i>Profile
+                        </a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a></li>
+                </ul>
+            </div>
+    
+            <!-- Notifications Bell -->
+            <a href="{{ url_for('notifications') }}" class="btn btn-light btn-icon rounded-circle position-relative"
+                title="View Notifications">
+                <i class="fas fa-bell text-warning"></i>
+            </a>
+    
+            
+        </div>
+    </div>
+       
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h2 class="text-primary">{{ hotels|length }}</h2>
+                    <p class="text-muted mb-0">Properties</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h2 class="text-success">{{ hotels|sum(attribute='total_rooms') }}</h2>
+                    <p class="text-muted mb-0">Total Rooms</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h2 class="text-info">{{ hotels|sum(attribute='total_bookings') }}</h2>
+                    <p class="text-muted mb-0">Total Bookings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Properties Section -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4">My Properties</h2>
+            <a href="{{ url_for('add_hotel') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Property
+            </a>
+        </div>
+        
+        <div class="row">
+            {% for hotel in hotels %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="h5 mb-0">{{ hotel.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-star"></i> {{ hotel.rating|default(4.0) }}
+                            </span>
+                            <span class="text-muted">{{ hotel.city }}, {{ hotel.state }}</span>
+                        </div>
+
+                        <div class="row text-center mb-3">
+                            <div class="col-6">
+                                <div class="text-muted small">Rooms</div>
+                                <div class="h5">{{ hotel.total_rooms }}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Bookings</div>
+                                <div class="h5">{{ hotel.total_bookings }}</div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('manage_rooms', hotel_id=hotel.hotel_id) }}"
+                                class="btn btn-outline-primary">
+                                <i class="fas fa-door-open"></i> Manage Rooms
+                            </a>
+                            <a href="{{ url_for('hotel_bookings', hotel_id=hotel.hotel_id) }}"
+                                class="btn btn-outline-success">
+                                <i class="fas fa-calendar-alt"></i> View Bookings
+                            </a>
+                            <a href="{{ url_for('edit_hotel', hotel_id=hotel.hotel_id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ url_for('delete_hotel', hotel_id=hotel.hotel_id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+<!-- In the Recent Bookings section -->
+<section class="mb-5">
+    <h2 class="h4 mb-3">Recent Bookings</h2>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Dates</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings %}
+                        <tr>
+                            <td>{{ booking.guest_name }}</td>
+                            <td>#{{ booking.room_number }}</td>
+                            <td>
+                                {{ booking.check_in_date|format_date }} -
+                                {{ booking.check_out_date|format_date }}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if booking.status == 'confirmed' else 'warning' }}">
+                                    {{ booking.status|title }}
+                                </span>
+                            </td>
+                            <td>${{ booking.total_price }}</td>
+                            <td>
+                                <a href="{{ url_for('booking_details', booking_id=booking.booking_id) }}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

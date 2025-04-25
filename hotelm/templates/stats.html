@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Spending Statistics</h3>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Spent</h5>
+                <p class="card-text">${{ stats.total_spent or 0 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Successful Payments</h5>
+                <p class="card-text">{{ stats.successful_payments or 0 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Refunds</h5>
+                <p class="card-text">{{ stats.refunds or 0 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

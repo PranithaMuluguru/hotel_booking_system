@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {# Or your main layout template #}
+
+{% block title %}My Cancellation History{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Cancellation History</h1>
+
+    {% if cancellations %}
+    <div class="table-responsive"> {# Make table scroll on small screens #}
+        <table class="table table-striped table-hover">
+            <thead class="table-light"> {# Lighter header #}
+                <tr>
+                    <th scope="col">Hotel</th>
+                    <th scope="col">Room</th>
+                    <th scope="col">Original Check-in</th>
+                    <th scope="col">Cancelled Date</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col" class="text-end">Refund Amount</th>
+                    <th scope="col">Booking Ref</th> {# Optional link to original booking #}
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in cancellations %}
+                <tr>
+                    <td>{{ c.hotel_name }}</td>
+                    <td>{{ c.room_number }}</td>
+                    <td>{{ c.original_check_in | format_date }}</td> {# Use your date filter #}
+                    <td>{{ c.cancellation_date | format_date }}</td> {# Use your date filter #}
+                    <td>{{ c.cancellation_reason | default('N/A', true) }}</td> {# Default filter with boolean true
+                    handles None/empty #}
+                    <td class="text-end text-success fw-bold">${{ "%.2f"|format(c.refund_amount|float) }}</td>
+                    <td>
+                        {# Link to booking details if you want #}
+                        <a href="{{ url_for('booking_details', booking_id=c.booking_id) }}"
+                            class="btn btn-sm btn-outline-info" title="View Original Booking">
+                            #{{ c.booking_id }}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        You have no cancellation records.
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

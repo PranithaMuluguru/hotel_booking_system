@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-receipt me-2"></i>Payment History</h3>
+        </div>
+        <div class="card-body">
+            {% if payments %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-borderless mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-end">Amount</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Booking Ref</th> <!-- Header exists -->
+                            <th scope="col">Hotel</th>
+                        </tr>
+                    </thead>
+                                        <tbody>
+                                            {% for p in payments %}
+                                            <tr>
+                                                <!-- Date -->
+                                                <td>{{ p.payment_date.strftime('%Y-%m-%d') if p.payment_date else 'N/A' }}</td>
+                                        
+                                                <!-- Amount -->
+                                                <td class="text-end">${{ "%.2f"|format(p.payment_amount) }}</td>
+                                        
+                                                <!-- Status -->
+                                                <td class="text-center">
+                                                    {% if p.payment_status|lower == 'confirmed' or p.payment_status|lower == 'completed' %}
+                                                    <span class="badge bg-success rounded-pill px-3 py-1">Completed</span>
+                                                    {% elif p.payment_status|lower == 'pending' %}
+                                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Pending</span>
+                                                    {% elif p.payment_status|lower == 'failed' %}
+                                                    <span class="badge bg-danger rounded-pill px-3 py-1">Failed</span>
+                                                    {% elif p.payment_status|lower == 'refunded' %}
+                                                    <span class="badge bg-info text-dark rounded-pill px-3 py-1">Refunded</span>
+                                                    {% else %}
+                                                    <span class="badge bg-secondary rounded-pill px-3 py-1">{{ p.payment_status|capitalize }}</span>
+                                                    {% endif %}
+                                                </td>
+                                        
+                                                <!-- Booking Ref - CORRECTED CELL -->
+                                                <td> {# Wrap the link in a TD #}
+                                                    <a href="{{ url_for('booking_details', booking_id=p.booking_id) }}" class="text-decoration-none" {#
+                                                        Optional: remove underline #} title="View Original Booking">
+                                                        #{{ p.booking_id }}
+                                                    </a>
+                                                </td>
+                                        
+                                                <!-- Hotel Name -->
+                                                <td>{{ p.hotel_name if p.hotel_name else 'N/A' }}</td>
+                                        
+                                        
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                <i class="fas fa-info-circle me-2"></i>No payment history found.
+            </div>
+            {% endif %}
+        </div>
+
+        {% if payments %}
+        <div class="card-footer text-muted small">
+            Displaying {{ payments|length }} payment record(s).
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Optional CSS -->
+<style>
+    .badge {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .table>thead {
+        vertical-align: bottom;
+    }
+</style>
+
+{% endblock %}
